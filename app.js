@@ -17,26 +17,29 @@ const uri = 'mongodb://127.0.0.1:27017/WikiDB';
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, "public")));
 app.set('view engine', 'ejs');
-
+// Connect to mongoose
 mongoose.connect(uri);
 
+// Schema/Model
 const Articles = mongoose.model('Articles', {
     title: String,
     content: String
 });
 
-const newArticle = new Articles({
-    title: 'Zildjian',
-    content:''
-});
-
-// Articles.save().then(() => console.log('saved!'));
+// will return a json object ==> Which is the Get request
+// console.log(await Articles.find().exec());
 
 
+app.get('/articles', async (req, res) => {
 
 
-app.get('/', (req, res) => {
-    // res.render(__dirname + '/views/home.ejs');
+    if ((await Articles.find().exec()).length == 0) { 
+        console.log("No data to show or there's an error occured");
+    }else{
+        
+    res.send(await Articles.find().exec());
+    }
+
     res.send('Hello World');
 });
 
