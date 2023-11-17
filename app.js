@@ -35,11 +35,13 @@ const Articles = mongoose.model('Articles', {
 
 // GET Request:
 app.get('/articles', async (req, res) => {
+
     if ((await Articles.find().exec()).length == 0) {
         res.send("No data to show or there's an error occured");
     } else {
-        res.sendFile(__dirname + '/index.html');
-    }
+        // res.sendFile(__dirname + '/index.html');
+        res.send(await Articles.find().exec());
+    };
 
 });
 
@@ -58,7 +60,6 @@ app.post('/articles', async (req, res) => {
             });
             await newArticle.save();
             res.status(200).send('Article added successfully');
-
         } else {
             res.status(500).send('Error processing the request');
         }
@@ -78,6 +79,15 @@ function postMethodAsSave(title, content) {
         return true;
     }
 }
+
+
+app.delete('/articles',async (req,res)=> { 
+
+    Articles.deleteMany();
+    res.send("Successfully deleted")
+
+});
+
 
 
 app.listen(port, () => {
