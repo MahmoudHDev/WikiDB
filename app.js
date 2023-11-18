@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import mongoose from 'mongoose';
+import mongoose, { Query } from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -33,7 +33,7 @@ const Articles = mongoose.model('Articles', {
 // will return a json object ==> Which is the Get request
 // console.log(await Articles.find().exec());
 
-
+/////////////////////////////////// Route for all Articles //////////////////////////////////
 app.route('/articles')
     .get(async (req, res, next) => {
         // GET
@@ -68,25 +68,8 @@ app.route('/articles')
     })
     .delete(async (req, res) => {
         await Articles.deleteMany();
-        res.send("Successfully deleted")
-    })
-    .put(async (req, res) => {
-        // Find by variable
-        const findArtic  = await Articles.find({title: req.body.title});
-
-        if (!findArtic) { 
-            return res.status(404).send('User not found');
-        }else{ 
-            console.log(req.body);
-            console.log(findArtic);
-            res.status(200).send("PUT Succeseded");    
-        }
-
-    })
-    .patch(async (req, res) => {
-        console.log(req.body);
-        res.send("PATCH Succeseded");
-    })
+        res.send("Successfully deleted all the documents");
+    });
 
 function postMethodAsSave(title, content) {
 
@@ -98,6 +81,37 @@ function postMethodAsSave(title, content) {
         return true;
     }
 };
+/////////////////////////////////// Route for a specific Article //////////////////////////////////
+app.route('/articles/:articleTitle')
+.get(async (req,res)=>{ 
+    // NOTE:- articleTitle is the name of the variable that we will use to access the params the user has been used in the request.
+    try {
+        // Find the user by ID
+        const paramTitle = req.params.articleTitle;
+        console.log(paramTitle);
+        const articleTitle = await Articles.findOne({title: paramTitle});
+        if (!articleTitle) {
+            return res.status(404).send('User not found');
+        }else{
+            res.send(articleTitle);
+
+        }
+    } catch (error) {
+        res.status(500).send('Error updating user');
+    }
+})
+.put(async (req, res) => {
+    // Find by variable
+    console.log(req.params.articleTitle);
+            // Replace the entire user data with the request body
+        // articleTitle.set(req.body); // Assuming req.body contains the entire updated user data
+        // await user.save();
+
+})
+.patch(async (req, res) => {
+    console.log(req.params.articleTitle);
+})
+
 // GET Request:
 // app.get('/articles', async (req, res) => {
 
@@ -107,13 +121,10 @@ function postMethodAsSave(title, content) {
 // app.post('/articles', async (req, res) => {
 
 // });
+// DELETE Request:
+// app.delete('/articles', async (req, res) => {
 
-
-
-
-app.delete('/articles', async (req, res) => {
-
-});
+// });
 
 
 
