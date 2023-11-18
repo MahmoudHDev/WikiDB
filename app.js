@@ -35,7 +35,7 @@ const Articles = mongoose.model('Articles', {
 
 /////////////////////////////////// Route for all Articles //////////////////////////////////
 app.route('/articles')
-    .get(async (req, res, next) => {
+    .get(async (req, res) => {
         // GET
         if ((await Articles.find().exec()).length == 0) {
             res.send("No data to show or there's an error occured");
@@ -44,7 +44,7 @@ app.route('/articles')
             res.send(await Articles.find().exec());
         };
     })
-    .post(async (req, res, next) => {
+    .post(async (req, res) => {
         // POST
         try {
             const theTitle = req.body.title;
@@ -125,6 +125,16 @@ app.route('/articles/:articleTitle')
 
         }
     })
+    .delete(async (req, res) => {
+        const paramTitle = req.params.articleTitle;
+        try {
+            await Articles.deleteOne({title: paramTitle});
+            res.status(200).send(`doc has been deleted`);
+        } catch (error) {
+            res.status(500).send(`Error Delteing Data ${error}`);
+        }
+    });
+
 
 // GET Request:
 // app.get('/articles', async (req, res) => {
