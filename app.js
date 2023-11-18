@@ -51,7 +51,6 @@ app.route('/articles')
             const theCont = req.body.content;
 
             if (postMethodAsSave(theTitle, theCont)) {
-                // => True
                 // Create a new article using the Mongoose model
                 const newArticle = new Articles({
                     title: theTitle,
@@ -67,10 +66,26 @@ app.route('/articles')
             console.error(error);
         };
     })
-    .delete((req, res) => {
-        Articles.deleteMany();
+    .delete(async (req, res) => {
+        await Articles.deleteMany();
         res.send("Successfully deleted")
-    
+    })
+    .put(async (req, res) => {
+        // Find by variable
+        const findArtic  = await Articles.find({title: req.body.title});
+
+        if (!findArtic) { 
+            return res.status(404).send('User not found');
+        }else{ 
+            console.log(req.body);
+            console.log(findArtic);
+            res.status(200).send("PUT Succeseded");    
+        }
+
+    })
+    .patch(async (req, res) => {
+        console.log(req.body);
+        res.send("PATCH Succeseded");
     })
 
 function postMethodAsSave(title, content) {
