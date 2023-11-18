@@ -100,20 +100,30 @@ app.route('/articles/:articleTitle')
         }
     })
     .put(async (req, res) => {
-        console.log(req.params.articleTitle);
         try {
             const paramTitle = req.params.articleTitle;
             await Articles.updateOne(
                 { title: paramTitle },  // Find the required doc
                 { title: 'ExpressV4', content: 'This is the updated copy of Express v4' },      // Update the new values (All Values)
                 { overwrite: true });   // To overwrite all values
-                res.send("Successfully updated")
-        } catch(error) {
+            res.send("Successfully updated")
+        } catch (error) {
             res.status(500).send('Error updating Data');
         }
     })
     .patch(async (req, res) => {
-        console.log(req.params.articleTitle);
+        const paramTitle = req.params.articleTitle;
+        try {
+            await Articles.findOneAndUpdate(
+                { title: paramTitle },
+                { $set: { title: 'UpdatedExpress' } },
+                { new: true }
+            );
+            res.send("Patched Successfully");
+        } catch (error) {
+            res.status(500).send(`Error updating Data ${error}`);
+
+        }
     })
 
 // GET Request:
