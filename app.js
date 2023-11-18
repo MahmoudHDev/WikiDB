@@ -83,34 +83,38 @@ function postMethodAsSave(title, content) {
 };
 /////////////////////////////////// Route for a specific Article //////////////////////////////////
 app.route('/articles/:articleTitle')
-.get(async (req,res)=>{ 
-    // NOTE:- articleTitle is the name of the variable that we will use to access the params the user has been used in the request.
-    try {
-        // Find the user by ID
-        const paramTitle = req.params.articleTitle;
-        console.log(paramTitle);
-        const articleTitle = await Articles.findOne({title: paramTitle});
-        if (!articleTitle) {
-            return res.status(404).send('User not found');
-        }else{
-            res.send(articleTitle);
-
+    .get(async (req, res) => {
+        // NOTE:- articleTitle is the name of the variable that we will use to access the params the user has been used in the request.
+        try {
+            // Find the user by ID
+            const paramTitle = req.params.articleTitle;
+            console.log(paramTitle);
+            const articleTitle = await Articles.findOne({ title: paramTitle });
+            if (!articleTitle) {
+                return res.status(404).send('User not found');
+            } else {
+                res.send(articleTitle);
+            }
+        } catch (error) {
+            res.status(500).send('Error updating user');
         }
-    } catch (error) {
-        res.status(500).send('Error updating user');
-    }
-})
-.put(async (req, res) => {
-    // Find by variable
-    console.log(req.params.articleTitle);
-            // Replace the entire user data with the request body
-        // articleTitle.set(req.body); // Assuming req.body contains the entire updated user data
-        // await user.save();
-
-})
-.patch(async (req, res) => {
-    console.log(req.params.articleTitle);
-})
+    })
+    .put(async (req, res) => {
+        console.log(req.params.articleTitle);
+        try {
+            const paramTitle = req.params.articleTitle;
+            await Articles.updateOne(
+                { title: paramTitle },  // Find the required doc
+                { title: 'ExpressV4', content: 'This is the updated copy of Express v4' },      // Update the new values (All Values)
+                { overwrite: true });   // To overwrite all values
+                res.send("Successfully updated")
+        } catch(error) {
+            res.status(500).send('Error updating Data');
+        }
+    })
+    .patch(async (req, res) => {
+        console.log(req.params.articleTitle);
+    })
 
 // GET Request:
 // app.get('/articles', async (req, res) => {
